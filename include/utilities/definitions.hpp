@@ -39,5 +39,33 @@ using glm::mat4;
 #   define ALPHA_ASSERT_NONE_REACHABLE_CONDITION() 
 #endif
 
+namespace TypeID
+{
 
+    template <typename T> 
+    constexpr std::string_view Name()
+    {
+#       if defined(__clang__)
+
+            constexpr std::string_view func = __PRETTY_FUNCTION__;
+            constexpr std::string_view prefix = "std::string_view TypeID::Name() [T = ";
+            constexpr std::string_view postfix = "]";
+
+            constexpr size_t start = func.find(prefix);
+            static_assert(start != std::string_view::npos, "Prefix not found.");
+
+            constexpr size_t type_start = start + prefix.size();
+            constexpr size_t type_end = func.find(postfix, type_start);
+            static_assert(type_end != std::string_view::npos, "Suffix not found.");
+
+            return func.substr(type_start, type_end - type_start);
+
+#       else
+#           error "Unsupported compiler."
+#       endif
+    }
+
+    
+
+};
 
