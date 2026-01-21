@@ -55,12 +55,19 @@ wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine, int nCmdS
     window_class.lpszClassName = L"alphaWindowClass";
     RegisterClassExW(&window_class);
 
+#   define CLIENT_WIDTH 1280
+#   define CLIENT_HEIGHT 720
+    RECT client_rect = { 0, 0, CLIENT_WIDTH, CLIENT_HEIGHT };
+    AdjustWindowRect(&client_rect, WS_OVERLAPPEDWINDOW, FALSE);
+    int32_t actual_width = client_rect.right - client_rect.left;
+    int32_t actual_height = client_rect.bottom - client_rect.top;
+
     HWND window_handle = CreateWindowExW(NULL,
             window_class.lpszClassName,
             L"Alpha Engine",
             WS_OVERLAPPEDWINDOW,
             CW_USEDEFAULT, CW_USEDEFAULT,
-            1280, 720,
+            actual_width, actual_height,
             NULL,
             NULL,
             hInstance,
