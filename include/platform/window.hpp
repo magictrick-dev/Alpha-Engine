@@ -25,7 +25,11 @@ class Window
         void            set_size(uint32_t width, uint32_t height);
         void            set_title(const std::string &title);
 
+        void            show();
+        void            poll_events();
+        void            swap_buffers();
         bool            should_close() const;
+        bool            is_valid() const;
 
         int32_t         get_width() const;
         int32_t         get_height() const;
