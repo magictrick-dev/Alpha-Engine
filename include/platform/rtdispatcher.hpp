@@ -21,6 +21,9 @@ struct RTEventWindowFocus { int32_t focused; };
 struct RTEventWindowMinimize { int32_t dummy; };
 struct RTEventWindowMaximize { int32_t dummy; };
 struct RTEventWindowRestore { int32_t dummy; };
+struct RTEventKeyPress { uint32_t engine_code; int32_t is_down; };
+struct RTEventKeyChar { uint32_t code_point; };
+
 
 struct RTEvent
 {
@@ -41,7 +44,17 @@ struct RTEvent
 
 };
 
+// NOTE(Chris): Single reader, multiple writer event queue. The runtime thread 
+//              is responsible for catching any events related to the platform,
+//              such as window changes, input, and internal runtime threads.
+//              Processing occurs at the start of the runtime loop, ensuring all
+//              events update the state of the runtime environment before any
+//              game-engine specific events occur.
+
 void rtdispatcher_swap_queues();
-bool rtdispatcher_queue_is_empty();
+bool rtdispatcher_read_queue_is_empty();
 RTEvent* rtdispatcher_get_current_event();
+void rtdispatcher_pop_current_event();
+void rtdispatcher_push_event(RTEvent event);
+
 

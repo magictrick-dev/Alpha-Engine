@@ -1,4 +1,5 @@
 #include <platform/window.hpp>
+#include <platform/rtdispatcher.hpp>
 
 // -------------------------------------------------------------------------------------------------
 // HWND / Win32 Window
@@ -21,6 +22,13 @@ wWindowProcedure(HWND window, UINT message, WPARAM wParam, LPARAM lParam)
         {
             int32_t width = LOWORD(lParam);
             int32_t height = HIWORD(lParam);
+            rtdispatcher_push_event({
+                .type = RTEventType_WindowResize,
+                .window_resize = {
+                    .width = width,
+                    .height = height,
+                },
+            });
         } break;
 
         case WM_CLOSE:
@@ -119,6 +127,18 @@ show()
     ShowWindow(impl->window_handle, SW_SHOWNORMAL);
 }
 
+void Window::
+poll_events()
+{
+
+}
+
+void Window::
+swap_buffers()
+{
+
+}
+
 bool Window::
 should_close() const
 {
@@ -212,7 +232,22 @@ set_title(const std::string &title)
 void Window::
 show()
 {
+    ALPHA_ASSERT_NO_IMPLEMENTATION();
+    return;
+}
 
+void Window::
+poll_events()
+{
+    ALPHA_ASSERT_NO_IMPLEMENTATION();
+    return;
+}
+
+void Window::
+swap_buffers()
+{
+    ALPHA_ASSERT_NO_IMPLEMENTATION();
+    return;
 }
 
 bool Window::

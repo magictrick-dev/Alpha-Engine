@@ -7,6 +7,7 @@ IF (WIN32)
     ADD_EXECUTABLE(alpha WIN32
         source/platform/entry.cpp
         source/platform/window.cpp
+        source/platform/rtdispatcher.cpp
         vendor/glad/glad.c
         vendor/glad/glad_wgl.c
     )
@@ -24,6 +25,7 @@ IF (UNIX)
     ADD_EXECUTABLE(alpha 
         source/platform/entry.cpp
         source/platform/window.cpp
+        source/platform/rtdispatcher.cpp
         vendor/glad/glad.c
     )
 
