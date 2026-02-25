@@ -20,15 +20,26 @@ wWindowProcedure(HWND window, UINT message, WPARAM wParam, LPARAM lParam)
 
         case WM_SIZE:
         {
+
             int32_t width = LOWORD(lParam);
             int32_t height = HIWORD(lParam);
-            rtdispatcher_push_event({
+
+            RTDispatcher::push_event({
                 .type = RTEventType_WindowResize,
                 .window_resize = {
                     .width = width,
                     .height = height,
                 },
             });
+
+            RTDispatcher::push_event({
+                .type = RTEventType_WindowFramebufferResize,
+                .window_framebuffer_resize = {
+                    .width = width,
+                    .height = height,
+                },
+            });
+
         } break;
 
         case WM_CLOSE:
@@ -60,6 +71,8 @@ Window::
 Window(int32_t width, int32_t height, const std::string &title)
     : impl(std::make_unique<Implementation>())
 {
+
+    SetProcessDpiAwarenessContext(DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2);
 
     WNDCLASSEXW window_class = {};
     window_class.cbSize         = sizeof(window_class);

@@ -7,8 +7,8 @@ static std::queue<RTEvent> event_queues[2];
 static std::queue<RTEvent> *read_queue = &event_queues[0];
 static std::queue<RTEvent> *write_queue = &event_queues[1];
 
-void 
-rtdispatcher_swap_queues()
+void RTDispatcher::
+swap_queues()
 {
 
     std::scoped_lock lock(event_queue_mtx);
@@ -17,16 +17,16 @@ rtdispatcher_swap_queues()
 
 }
 
-bool 
-rtdispatcher_read_queue_is_empty()
+bool RTDispatcher::
+is_empty()
 {
 
     return read_queue->empty();
 
 }
 
-RTEvent*
-rtdispatcher_get_current_event()
+RTEvent* RTDispatcher::
+get_current_event()
 {
 
     if (read_queue->empty()) return nullptr;
@@ -34,15 +34,15 @@ rtdispatcher_get_current_event()
 
 }
 
-void 
-rtdispatcher_pop_current_event()
+void RTDispatcher::
+pop_event()
 {
     if (!read_queue->empty())
         read_queue->pop();
 }
 
-void 
-rtdispatcher_push_event(RTEvent event)
+void RTDispatcher::
+push_event(RTEvent event)
 {
     std::scoped_lock lock(event_queue_mtx);
     write_queue->push(event);

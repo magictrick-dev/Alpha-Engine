@@ -51,10 +51,13 @@ struct RTEvent
 //              events update the state of the runtime environment before any
 //              game-engine specific events occur.
 
-void rtdispatcher_swap_queues();
-bool rtdispatcher_read_queue_is_empty();
-RTEvent* rtdispatcher_get_current_event();
-void rtdispatcher_pop_current_event();
-void rtdispatcher_push_event(RTEvent event);
-
+class RTDispatcher
+{
+    public:
+        static void swap_queues();
+        static void pop_event();
+        static void push_event(RTEvent event);
+        static bool is_empty();
+        static RTEvent* get_current_event();
+};
 

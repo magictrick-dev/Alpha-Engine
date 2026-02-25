@@ -33,27 +33,37 @@ wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine, int nCmdS
             break;
         }
 
-        rtdispatcher_swap_queues();
-        while (!rtdispatcher_read_queue_is_empty())
+        RTDispatcher::swap_queues();
+        while (!RTDispatcher::is_empty())
         {
-            RTEvent *current_event = rtdispatcher_get_current_event();
-            switch (current_event->type)
+
+            RTEvent *current_event = RTDispatcher::get_current_event();
+            RTEventType event_type = current_event->type;
+            switch (event_type)
             {
 
                 case RTEventType_WindowResize:
                 {
                     int32_t width = current_event->window_resize.width;
-                    int32_t height = current_event->window_resize.width;
-                    std::println("Window Resize: {}, {}", width, height);
+                    int32_t height = current_event->window_resize.height;
+                    std::println("[Debug][Platform] Window Resize: {}, {}", width, height);
+                } break;
+
+                case RTEventType_WindowFramebufferResize:
+                {
+                    int32_t width = current_event->window_framebuffer_resize.width;
+                    int32_t height = current_event->window_framebuffer_resize.height;
+                    std::println("[Debug][Platform] Window Framebuffer Resize: {}, {}", width, height);
                 } break;
 
                 default:
                 {
-                    // Pass, no implementation.
+                    std::println("[Error][Platform] Uncaught event {}", uint32_t(event_type));
                 } break;
 
             }
-            rtdispatcher_pop_current_event();
+            RTDispatcher::pop_event();
+
         }
 
         platform_window.swap_buffers();
