@@ -52,6 +52,7 @@ struct Window::Implementation
 
     HWND window_handle = NULL;
     HDC device_context = NULL;
+    BOOL should_close = false;
 
 };
 
@@ -122,6 +123,13 @@ set_title(const std::string &title)
 }
 
 void Window::
+close()
+{
+    ReleaseDC(impl->window_handle, impl->device_context);
+    DestroyWindow(impl->window_handle);
+}
+
+void Window::
 show()
 {
     ShowWindow(impl->window_handle, SW_SHOWNORMAL);
@@ -131,19 +139,32 @@ void Window::
 poll_events()
 {
 
+    MSG message = {};
+    while (PeekMessageW(&message, 0, 0, 0, PM_REMOVE))
+    {
+
+        TranslateMessage(&message);
+        DispatchMessageW(&message);
+
+        if (message.message == WM_QUIT)
+        {
+            impl->should_close = true;
+        }
+
+    }
+
 }
 
 void Window::
 swap_buffers()
 {
-
+    SwapBuffers(impl->device_context);
 }
 
 bool Window::
 should_close() const
 {
-    ALPHA_ASSERT_NO_IMPLEMENTATION();
-    return false;
+    return impl->should_close;
 }
 
 bool Window::

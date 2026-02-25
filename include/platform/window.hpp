@@ -30,6 +30,7 @@ class Window
         void            swap_buffers();
         bool            should_close() const;
         bool            is_valid() const;
+        void            close();
 
         int32_t         get_width() const;
         int32_t         get_height() const;

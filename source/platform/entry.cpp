@@ -2,7 +2,9 @@
 #   pragma comment(lib, "opengl32.lib")
 #   define WIN32_LEAN_AND_MEAN
 #   include <windows.h>
+#   include <print>
 #   include <platform/window.hpp>
+#   include <platform/rtdispatcher.hpp>
 #   include <utilities/definitions.hpp>
 
 int WINAPI 
@@ -17,28 +19,48 @@ wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine, int nCmdS
 #endif
 
     Window platform_window = Window(1280, 720, "Alpha Engine");
+    platform_window.show();
 
     static bool application_running = true;
     while (application_running)
     {
 
-        MSG message = {};
-        while (PeekMessageW(&message, 0, 0, 0, PM_REMOVE))
+        // Poll platform events.
+        platform_window.poll_events();
+        if (platform_window.should_close())
         {
+            application_running = false;
+            break;
+        }
 
-            TranslateMessage(&message);
-            DispatchMessageW(&message);
-
-            if (message.message == WM_QUIT)
+        rtdispatcher_swap_queues();
+        while (!rtdispatcher_read_queue_is_empty())
+        {
+            RTEvent *current_event = rtdispatcher_get_current_event();
+            switch (current_event->type)
             {
-                application_running = false;
-            }
 
+                case RTEventType_WindowResize:
+                {
+                    int32_t width = current_event->window_resize.width;
+                    int32_t height = current_event->window_resize.width;
+                    std::println("Window Resize: {}, {}", width, height);
+                } break;
+
+                default:
+                {
+                    // Pass, no implementation.
+                } break;
+
+            }
+            rtdispatcher_pop_current_event();
         }
 
         platform_window.swap_buffers();
 
     }
+
+    platform_window.close();
 
     return 0;
 
