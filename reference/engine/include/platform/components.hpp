@@ -1,0 +1,9 @@
+#pragma once
+#include <platform/components/metadata.hpp>
+#include <platform/components/transform.hpp>
+#include <platform/components/material.hpp>
+#include <platform/components/camera_controller.hpp>
+#include <platform/components/mesh.hpp>
+#include <platform/components/grid.hpp>
+#include <platform/components/directional_light.hpp>
+#include <platform/components/point_light.hpp>

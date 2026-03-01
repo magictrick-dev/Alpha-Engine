@@ -6,6 +6,7 @@ SET(CMAKE_CXX_STANDARD 23 REQUIRED)
 IF (WIN32)
 
     ADD_EXECUTABLE(alpha WIN32
+        source/runtime.cpp
         source/platform/entry.cpp
         source/platform/window.cpp
         source/platform/rtdispatcher.cpp

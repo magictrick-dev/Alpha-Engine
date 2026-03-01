@@ -1,11 +1,9 @@
+#include <runtime.hpp>
+
 #if defined(_WIN32)
 #   pragma comment(lib, "opengl32.lib")
 #   define WIN32_LEAN_AND_MEAN
 #   include <windows.h>
-#   include <print>
-#   include <platform/window.hpp>
-#   include <platform/rtdispatcher.hpp>
-#   include <utilities/definitions.hpp>
 
 int WINAPI 
 wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine, int nCmdShow)
@@ -18,59 +16,10 @@ wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine, int nCmdS
     freopen_s((FILE**)stdin,    "CONIN$",   "r", stdin);
 #endif
 
-    Window platform_window = Window(1280, 720, "Alpha Engine");
-    platform_window.show();
-
-    static bool application_running = true;
-    while (application_running)
-    {
-
-        // Poll platform events.
-        platform_window.poll_events();
-        if (platform_window.should_close())
-        {
-            application_running = false;
-            break;
-        }
-
-        RTDispatcher::swap_queues();
-        while (!RTDispatcher::is_empty())
-        {
-
-            RTEvent *current_event = RTDispatcher::get_current_event();
-            RTEventType event_type = current_event->type;
-            switch (event_type)
-            {
-
-                case RTEventType_WindowResize:
-                {
-                    int32_t width = current_event->window_resize.width;
-                    int32_t height = current_event->window_resize.height;
-                    std::println("[Debug][Platform] Window Resize: {}, {}", width, height);
-                } break;
-
-                case RTEventType_WindowFramebufferResize:
-                {
-                    int32_t width = current_event->window_framebuffer_resize.width;
-                    int32_t height = current_event->window_framebuffer_resize.height;
-                    std::println("[Debug][Platform] Window Framebuffer Resize: {}, {}", width, height);
-                } break;
-
-                default:
-                {
-                    std::println("[Error][Platform] Uncaught event {}", uint32_t(event_type));
-                } break;
-
-            }
-            RTDispatcher::pop_event();
-
-        }
-
-        platform_window.swap_buffers();
-
-    }
-
-    platform_window.close();
+    RuntimeState runtime_state = {};
+    runtime_init(&runtime_state);
+    runtime_main(&runtime_state);
+    runtime_exit(&runtime_state);
 
     return 0;
 
